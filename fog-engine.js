@@ -209,7 +209,7 @@
         this.fitToContainer();
         this.render();
       };
-      this.image.src = this.mapDef.image;
+      this.image.src = (window.DND_ASSET_BASE || "") + this.mapDef.image;
       this.cancelDraw();
       this.editingRegion = null;
     }
