@@ -411,7 +411,7 @@
           ctx.lineWidth = Math.max(1.5, 2 / this.zoom);
           this._strokePoly(ctx, region.points);
 
-          if (region.number || region.label) {
+          if (region.kind !== "corridor" && (region.number || region.label)) {
             const cx = (b.minX + b.maxX) / 2, cy = (b.minY + b.maxY) / 2;
             const fontSize = Math.max(14, Math.min(26, (b.maxX - b.minX) / 3));
             ctx.font = `bold ${fontSize}px sans-serif`;
