@@ -10,6 +10,7 @@
 <body class="player">
 <header class="topbar">
   <h1 id="mapName">&#128506; Palace of the Silver Princess</h1>
+  <span class="badge" id="syncStatus">Sync: local only</span>
   <div style="flex:1"></div>
   <button id="fitBtn">Fit</button>
   <button id="fullscreenBtn">&#9974; Fullscreen</button>
@@ -22,6 +23,13 @@
     </div>
   </div>
 </div>
+<script>
+  // Enables live cross-device sync when served over http(s) — see
+  // sync-server/README.md. Harmless no-op for file:// / offline use.
+  if (location.protocol !== "file:") {
+    window.DND_SYNC_WS_URL = (location.protocol === "https:" ? "wss://" : "ws://") + location.hostname + ":8181";
+  }
+</script>
 <script src="data.js"></script>
 <script src="fog-engine.js"></script>
 <script src="app-player.js"></script>

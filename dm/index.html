@@ -14,6 +14,7 @@
   <button id="fitBtn" title="Fit map to window">Fit</button>
   <button id="panBtn" title="Hold to drag the map (or toggle on)">Pan</button>
   <span class="badge">Right-click drag also pans</span>
+  <span class="badge" id="syncStatus">Sync: local only</span>
   <div style="flex:1"></div>
   <label class="hint">Fog color
     <select id="fogColor">
@@ -75,7 +76,14 @@
 
 <footer class="status" id="statusBar">Ready.</footer>
 
-<script>window.DND_ASSET_BASE = "../";</script>
+<script>
+  window.DND_ASSET_BASE = "../";
+  // Enables live cross-device sync when served over http(s) — see
+  // sync-server/README.md. Harmless no-op for file:// / offline use.
+  if (location.protocol !== "file:") {
+    window.DND_SYNC_WS_URL = (location.protocol === "https:" ? "wss://" : "ws://") + location.hostname + ":8181";
+  }
+</script>
 <script src="../data.js"></script>
 <script src="../fog-engine.js"></script>
 <script src="app-dm.js"></script>
