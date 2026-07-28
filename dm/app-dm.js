@@ -330,7 +330,7 @@
   };
 
   document.getElementById("openPlayerBtn").onclick = () => {
-    window.open("../dnd/index.html", "dnd-player-view", "width=1200,height=800");
+    window.open("../index.html", "dnd-player-view", "width=1200,height=800");
     setStatus("Player view opened. Drag it to your TV/second monitor and press F11 there for fullscreen.");
   };
 
