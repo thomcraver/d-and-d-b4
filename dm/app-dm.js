@@ -1,5 +1,5 @@
 (function () {
-  const { Store, MapView } = window.FogApp;
+  const { Store, MapView, Sync } = window.FogApp;
   Store.load();
 
   const mapSelect = document.getElementById("mapSelect");
@@ -11,6 +11,20 @@
   const finishDrawBtn = document.getElementById("finishDrawBtn");
   const cancelDrawBtn = document.getElementById("cancelDrawBtn");
   const panBtn = document.getElementById("panBtn");
+  const syncStatusEl = document.getElementById("syncStatus");
+
+  const SYNC_LABELS = {
+    disabled: "Sync: local only",
+    connecting: "Sync: connecting…",
+    connected: "Sync: live ●",
+    offline: "Sync: offline (retrying…)"
+  };
+  if (syncStatusEl) {
+    Sync.onStatus((status) => {
+      syncStatusEl.textContent = SYNC_LABELS[status] || status;
+      syncStatusEl.style.color = status === "connected" ? "#34d399" : status === "offline" ? "#ef4444" : "";
+    });
+  }
 
   for (const id of Object.keys(DND_MAPS)) {
     const opt = document.createElement("option");

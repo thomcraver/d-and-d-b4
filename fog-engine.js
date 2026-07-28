@@ -123,6 +123,13 @@
   const Sync = {
     channel: null,
     listeners: [],
+    statusListeners: [],
+    ws: null,
+    wsUrl: null,
+    wsStatus: "disabled", // disabled | connecting | connected | offline
+    wsReconnectDelay: 1000,
+    suppressWsEcho: false,
+
     init() {
       if ("BroadcastChannel" in window) {
         this.channel = new BroadcastChannel(CHANNEL_NAME);
@@ -133,9 +140,64 @@
           try { this.listeners.forEach(fn => fn(JSON.parse(ev.newValue))); } catch (e) {}
         }
       });
+
+      // Optional live cross-device sync: set window.DND_SYNC_WS_URL (e.g. in
+      // index.html / dm/index.html) to a ws:// or wss:// URL to enable it.
+      // Without it, sync stays same-device-only (BroadcastChannel/localStorage),
+      // which is all file:// usage can support anyway.
+      if (window.DND_SYNC_WS_URL) {
+        this.wsUrl = window.DND_SYNC_WS_URL;
+        this._connectWs();
+      }
     },
+
+    _setStatus(status) {
+      this.wsStatus = status;
+      this.statusListeners.forEach(fn => fn(status));
+    },
+
+    _connectWs() {
+      this._setStatus("connecting");
+      let ws;
+      try {
+        ws = new WebSocket(this.wsUrl);
+      } catch (e) {
+        this._setStatus("offline");
+        this._scheduleReconnect();
+        return;
+      }
+      this.ws = ws;
+
+      ws.onopen = () => {
+        this._setStatus("connected");
+        this.wsReconnectDelay = 1000;
+      };
+      ws.onmessage = (ev) => {
+        let msg;
+        try { msg = JSON.parse(ev.data); } catch (e) { return; }
+        if (msg.type === "state" && msg.state) {
+          this.listeners.forEach(fn => fn(msg.state));
+        }
+      };
+      ws.onclose = () => {
+        this._setStatus("offline");
+        this._scheduleReconnect();
+      };
+      ws.onerror = () => { try { ws.close(); } catch (e) {} };
+    },
+
+    _scheduleReconnect() {
+      setTimeout(() => this._connectWs(), this.wsReconnectDelay);
+      this.wsReconnectDelay = Math.min(this.wsReconnectDelay * 1.6, 15000);
+    },
+
+    onStatus(fn) { this.statusListeners.push(fn); fn(this.wsStatus); },
+
     broadcast(state) {
       if (this.channel) this.channel.postMessage(deepClone(state));
+      if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+        this.ws.send(JSON.stringify({ type: "state", state: deepClone(state) }));
+      }
     },
     onUpdate(fn) { this.listeners.push(fn); }
   };

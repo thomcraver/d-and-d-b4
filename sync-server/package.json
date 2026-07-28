@@ -1,0 +1,13 @@
+{
+  "name": "dnd-map-reveal-sync-server",
+  "version": "1.0.0",
+  "description": "Live sync relay for the B3 map reveal tool, so the DM console and every player device stay in sync in real time.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.21.1"
+  }
+}

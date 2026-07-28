@@ -4,6 +4,20 @@
 
   const stageWrap = document.getElementById("stageWrap");
   const mapNameEl = document.getElementById("mapName");
+  const syncStatusEl = document.getElementById("syncStatus");
+
+  const SYNC_LABELS = {
+    disabled: "Sync: local only",
+    connecting: "Sync: connecting…",
+    connected: "Sync: live ●",
+    offline: "Sync: offline (retrying…)"
+  };
+  if (syncStatusEl) {
+    Sync.onStatus((status) => {
+      syncStatusEl.textContent = SYNC_LABELS[status] || status;
+      syncStatusEl.style.color = status === "connected" ? "#34d399" : status === "offline" ? "#ef4444" : "";
+    });
+  }
 
   const view = new MapView(stageWrap, {
     dmMode: false,
@@ -31,6 +45,7 @@
   Sync.onUpdate((state) => {
     const mapChanged = state.activeMap !== Store.state.activeMap;
     Store.state = state;
+    Store.save(false); // persist locally for reload durability; don't re-broadcast
     view.opts.fogColor = state.fogColor;
     if (mapChanged) loadMap(state.activeMap);
     else refresh();
