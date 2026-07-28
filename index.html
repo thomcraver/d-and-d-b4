@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Palace of the Silver Princess — DM Map Reveal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="topbar">
+  <h1>&#128481; Palace of the Silver Princess — DM Console</h1>
+  <select id="mapSelect"></select>
+  <button id="fitBtn" title="Fit map to window">Fit</button>
+  <button id="panBtn" title="Hold to drag the map (or toggle on)">Pan</button>
+  <span class="badge">Right-click drag also pans</span>
+  <div style="flex:1"></div>
+  <label class="hint">Fog color
+    <select id="fogColor">
+      <option value="#000000">Black</option>
+      <option value="#ffffff">White</option>
+      <option value="#0a0f1a">Midnight</option>
+    </select>
+  </label>
+  <button id="openPlayerBtn" class="primary">&#128250; Open Player View</button>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="section">
+      <h2>Reveal Tools</h2>
+      <div class="toolrow">
+        <button id="revealAllBtn">Reveal all rooms</button>
+        <button id="hideAllBtn">Hide all rooms</button>
+      </div>
+      <p class="hint" style="margin-top:.5rem">Click any room directly on the map to reveal/hide it. Secret doors never reveal their parent room, and revealing a room never reveals its secret doors.</p>
+    </div>
+
+    <div class="section">
+      <h2>Add / Edit Regions</h2>
+      <div class="toolrow">
+        <button id="newRoomBtn">+ New room</button>
+        <button id="newSecretBtn">+ New secret door</button>
+        <button id="finishDrawBtn" style="display:none">Finish shape (Enter)</button>
+        <button id="cancelDrawBtn" style="display:none">Cancel (Esc)</button>
+      </div>
+      <div id="drawForm"></div>
+      <p class="hint" style="margin-top:.5rem">Click points on the map to trace a room's outline (or just 2 clicks for a quick rectangle), then Finish. Use the pencil icon on any room in the list to reshape it.</p>
+    </div>
+
+    <div class="section">
+      <h2>Save Data</h2>
+      <div class="toolrow">
+        <button id="exportBtn">Export JSON</button>
+        <button id="importBtn">Import JSON</button>
+        <button id="resetMapBtn" class="danger">Reset this map</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" style="display:none" />
+    </div>
+
+    <div class="section" style="flex:1; display:flex; flex-direction:column; min-height:0; border-bottom:none;">
+      <h2>Rooms &amp; Secrets</h2>
+    </div>
+    <div class="room-list" id="roomList"></div>
+  </aside>
+
+  <div class="stage-wrap" id="stageWrap">
+    <div class="zoom-controls">
+      <button id="zoomIn">+</button>
+      <button id="zoomOut">&minus;</button>
+    </div>
+  </div>
+</div>
+
+<footer class="status" id="statusBar">Ready.</footer>
+
+<script src="data.js"></script>
+<script src="fog-engine.js"></script>
+<script src="app-dm.js"></script>
+</body>
+</html>
