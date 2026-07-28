@@ -58,7 +58,9 @@
 
   function renderRoomList(regions) {
     roomList.innerHTML = "";
-    const rooms = regions.filter(r => !r.secret).sort((a, b) => (parseInt(a.number) || 0) - (parseInt(b.number) || 0));
+    const rooms = regions.filter(r => !r.secret && r.kind !== "corridor")
+      .sort((a, b) => (parseInt(a.number) || 0) - (parseInt(b.number) || 0));
+    const corridors = regions.filter(r => !r.secret && r.kind === "corridor");
     const secrets = regions.filter(r => r.secret);
 
     const addHeading = (text) => {
@@ -73,8 +75,16 @@
 
     addHeading(`Rooms (${rooms.length})`);
     rooms.forEach(r => roomList.appendChild(buildRoomItem(r)));
-    addHeading(`Secret doors / features (${secrets.length})`);
+
+    addHeading(`Secrets / traps (${secrets.length})`);
     secrets.forEach(r => roomList.appendChild(buildRoomItem(r)));
+
+    const revealedCorridors = corridors.filter(r => Store.isRevealed(view.mapDef.id, r)).length;
+    const note = document.createElement("div");
+    note.className = "hint";
+    note.style.padding = "0.6rem 0.8rem";
+    note.textContent = `${corridors.length} corridor segments (${revealedCorridors} revealed) — click hallways directly on the map to reveal them; they're not listed individually here.`;
+    roomList.appendChild(note);
   }
 
   function buildRoomItem(region) {
@@ -166,8 +176,8 @@
     finishDrawBtn.style.display = "";
     cancelDrawBtn.style.display = "";
     setStatus(secret
-      ? "Click points to trace the secret door/feature, then Finish."
-      : "Click points to trace the room outline (2 clicks = quick rectangle), then Finish.");
+      ? "Click points to trace the secret/trap area, then Finish."
+      : "Click points to trace the room/corridor outline (2 clicks = quick rectangle), then Finish.");
   }
 
   finishDrawBtn.onclick = () => finishDraw();
@@ -201,10 +211,10 @@
     wrap.className = "editor-form";
 
     const numLabel = document.createElement("label");
-    numLabel.textContent = secret ? "Feature name" : "Room number";
+    numLabel.textContent = secret ? "Feature name" : "Room/corridor number";
     const numInput = document.createElement("input");
     numInput.type = "text";
-    numInput.placeholder = secret ? "e.g. Secret door to 12" : "e.g. 12";
+    numInput.placeholder = secret ? "e.g. Trap in Room 27" : "e.g. 12 or corridor-5-6";
 
     const nameLabel = document.createElement("label");
     nameLabel.textContent = "Label (optional)";
@@ -272,7 +282,7 @@
     regions.forEach(r => Store.setRevealed(view.mapDef.id, r, true));
     Store.save();
     refreshAll();
-    setStatus("All rooms revealed (secrets untouched).");
+    setStatus("All rooms/corridors revealed (secrets/traps untouched).");
   };
   document.getElementById("hideAllBtn").onclick = () => {
     const regions = Store.getRegions(view.mapDef.id);
@@ -320,7 +330,7 @@
   };
 
   document.getElementById("openPlayerBtn").onclick = () => {
-    window.open("player.html", "dnd-player-view", "width=1200,height=800");
+    window.open("../dnd/index.html", "dnd-player-view", "width=1200,height=800");
     setStatus("Player view opened. Drag it to your TV/second monitor and press F11 there for fullscreen.");
   };
 
