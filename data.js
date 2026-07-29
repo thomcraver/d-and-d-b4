@@ -880,8 +880,8 @@ const DND_MAPS = {
     width: 1584,
     height: 672,
     rooms: [
-      { id: "gy-road", number: "1", label: "Forest Road", points: [[1400,60],[1584,60],[1584,500],[1400,500]] },
-      { id: "gy-bridge", number: "2", label: "Bridge Crossing", points: [[650,200],[1400,200],[1400,460],[650,460]] },
+      { id: "gy-road", number: "1", label: "Forest Road", points: [[1400,0],[1584,0],[1584,672],[1400,672]] },
+      { id: "gy-bridge", number: "2", label: "Bridge Crossing", points: [[615,0],[1400,0],[1400,672],[615,672]] },
       { id: "gy-crypt", number: "3", label: "Crypt Interior", points: [[185,270],[520,270],[520,400],[185,400]] },
       { id: "gy-yard", number: "4", label: "Graveyard Yard", points: [[80,85],[625,85],[625,565],[80,565]] }
     ]
