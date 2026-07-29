@@ -862,10 +862,11 @@ const DND_MAPS = {
     width: 1584,
     height: 672,
     rooms: [
-      { id: "tv-yard", number: "1", label: "Yard & Loading Dock", points: [[10,65],[735,65],[735,565],[10,565]] },
+      { id: "tv-yard", number: "1", label: "Yard & Loading Dock", points: [[10,0],[735,0],[735,672],[10,672]] },
       { id: "tv-common", number: "2", label: "Common Room", points: [[745,90],[1170,90],[1170,545],[745,545]] },
       { id: "tv-kitchen", number: "3", label: "Kitchen & Cellar Stairs", points: [[1170,80],[1500,80],[1500,545],[1350,545],[1350,395],[1170,395]] },
       { id: "tv-pantry", number: "4", label: "Pantry (Side Door)", points: [[1170,395],[1350,395],[1350,545],[1170,545]] },
+      { id: "tv-path", number: "5", label: "Path to Side Door", points: [[720,535],[1584,535],[1584,672],[720,672]] },
       { id: "tv-ext-n", number: "", label: "Exterior Wall", kind: "corridor", alwaysRevealed: true, points: [[745,72],[1500,72],[1500,90],[745,90]] },
       { id: "tv-ext-s", number: "", label: "Exterior Wall", kind: "corridor", alwaysRevealed: true, points: [[745,538],[1500,538],[1500,556],[745,556]] },
       { id: "tv-ext-w", number: "", label: "Exterior Wall", kind: "corridor", alwaysRevealed: true, points: [[737,72],[753,72],[753,556],[737,556]] },
