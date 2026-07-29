@@ -846,6 +846,45 @@ const DND_MAPS = {
       { id: "s-59-60", label: "Secret door to Closet (60)", points: [[345,330],[365,330],[365,390],[345,390]] },
       { id: "s-70-76", label: "Secret door south of 70", points: [[795,1400],[825,1400],[825,1450],[795,1450]] }
     ]
+  },
+
+  // Custom one-shot maps for the Session Zero intro (Silver Unicorn Tavern +
+  // Necromancer's Playground graveyard), generated art at 1584x672. Per DM
+  // request: the tavern's common room stays one reveal piece (well-lit, seen
+  // at a glance), and the back-of-house splits into just two pieces along its
+  // real wall (the side/kitchen door room vs. everything else). The exterior
+  // wall band is a separate alwaysRevealed region so the building's outline
+  // shows before the party ever opens a door, without exposing the interior.
+  tavern: {
+    id: "tavern",
+    name: "The Silver Unicorn Tavern",
+    image: "maps/tavern.png",
+    width: 1584,
+    height: 672,
+    rooms: [
+      { id: "tv-yard", number: "1", label: "Yard & Loading Dock", points: [[10,65],[735,65],[735,565],[10,565]] },
+      { id: "tv-common", number: "2", label: "Common Room", points: [[745,90],[1170,90],[1170,545],[745,545]] },
+      { id: "tv-kitchen", number: "3", label: "Kitchen & Cellar Stairs", points: [[1170,80],[1500,80],[1500,545],[1350,545],[1350,395],[1170,395]] },
+      { id: "tv-pantry", number: "4", label: "Pantry (Side Door)", points: [[1170,395],[1350,395],[1350,545],[1170,545]] },
+      { id: "tv-ext-n", number: "", label: "Exterior Wall", kind: "corridor", alwaysRevealed: true, points: [[745,72],[1500,72],[1500,90],[745,90]] },
+      { id: "tv-ext-s", number: "", label: "Exterior Wall", kind: "corridor", alwaysRevealed: true, points: [[745,538],[1500,538],[1500,556],[745,556]] },
+      { id: "tv-ext-w", number: "", label: "Exterior Wall", kind: "corridor", alwaysRevealed: true, points: [[737,72],[753,72],[753,556],[737,556]] },
+      { id: "tv-ext-e", number: "", label: "Exterior Wall", kind: "corridor", alwaysRevealed: true, points: [[1492,72],[1508,72],[1508,556],[1492,556]] }
+    ]
+  },
+
+  graveyard: {
+    id: "graveyard",
+    name: "Necromancer's Playground (Graveyard)",
+    image: "maps/graveyard.png",
+    width: 1584,
+    height: 672,
+    rooms: [
+      { id: "gy-road", number: "1", label: "Forest Road", points: [[1400,60],[1584,60],[1584,500],[1400,500]] },
+      { id: "gy-bridge", number: "2", label: "Bridge Crossing", points: [[650,200],[1400,200],[1400,460],[650,460]] },
+      { id: "gy-crypt", number: "3", label: "Crypt Interior", points: [[185,270],[520,270],[520,400],[185,400]] },
+      { id: "gy-yard", number: "4", label: "Graveyard Yard", points: [[80,85],[625,85],[625,565],[80,565]] }
+    ]
   }
 };
 

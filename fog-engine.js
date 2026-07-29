@@ -71,6 +71,7 @@
     },
 
     isRevealed(mapId, region) {
+      if (region.alwaysRevealed) return true;
       const ms = this.getMapState(mapId);
       return region.secret ? !!ms.secretsRevealed[region.id] : !!ms.revealed[region.id];
     },
