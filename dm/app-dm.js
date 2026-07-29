@@ -53,7 +53,7 @@
 
   function loadMap(mapId) {
     Store.state.activeMap = mapId;
-    Store.save(false);
+    Store.save(); // broadcast so player views switch maps immediately, same as any reveal click
     view.setMap(mapId);
     const check = () => {
       if (!view.imageLoaded) { requestAnimationFrame(check); return; }
