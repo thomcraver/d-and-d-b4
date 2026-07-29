@@ -80,8 +80,13 @@
   window.DND_ASSET_BASE = "../";
   // Enables live cross-device sync when served over http(s) — see
   // sync-server/README.md. Harmless no-op for file:// / offline use.
-  if (location.protocol !== "file:") {
-    window.DND_SYNC_WS_URL = (location.protocol === "https:" ? "wss://" : "ws://") + location.hostname + ":8181";
+  if (location.protocol === "https:") {
+    // Reverse-proxied through the web server (same origin/port, reuses its
+    // TLS cert) — see sync-server/README.md for the Apache/Nginx config.
+    window.DND_SYNC_WS_URL = "wss://" + location.host + "/dnd-sync";
+  } else if (location.protocol === "http:") {
+    // Plain http: connect directly to the sync server's own port.
+    window.DND_SYNC_WS_URL = "ws://" + location.hostname + ":8181";
   }
 </script>
 <script src="../data.js"></script>

@@ -21,11 +21,16 @@ node server.js
 ```
 
 By default it listens on port **8181** on all interfaces. The client pages
-(`index.html`, `dm/index.html`) auto-connect to
-`ws://<whatever host you loaded the page from>:8181` whenever they're
-served over http/https (this is skipped entirely for `file://` use). If you
-want a different port, change `PORT` below and also update the `:8181` in
-both HTML files' inline `<script>` block.
+(`index.html`, `dm/index.html`) pick the connection automatically:
+- Served over **http** → connects directly to `ws://<host>:8181`.
+- Served over **https** → connects to `wss://<host>/dnd-sync` instead,
+  reverse-proxied through your existing web server so it can reuse its TLS
+  cert (see "HTTPS sites" below) rather than needing its own.
+- Opened via `file://` → sync stays same-device-only, no connection
+  attempted at all.
+
+If you want a different port, change `PORT` below and update the `:8181`
+in both HTML files' inline `<script>` block to match.
 
 ### Keep it running
 
@@ -59,22 +64,53 @@ then `systemctl enable --now dnd-sync`.
 
 ### Firewall
 
-The browser connects to this port directly (not proxied through your web
-server), so it needs to be reachable: open port 8181 (or whatever you set
-`PORT` to) in your Linode's firewall / cloud firewall rules, e.g.:
+**If your site is plain http**, the browser connects to port 8181 directly,
+so it needs to be reachable from the outside — open it in your Linode's
+firewall / cloud firewall rules:
 ```bash
 sudo ufw allow 8181/tcp
 ```
 
+**If your site is https** (see below), the browser never talks to 8181
+directly — only your web server does, over localhost — so you can skip the
+firewall rule above entirely (or remove it if you'd already added it) and
+keep 8181 unreachable from the outside world. More secure, and one less
+moving part.
+
 ### HTTPS sites
 
-If your site is served over `https://`, browsers require the WebSocket to
-also be secure (`wss://`), which means this port needs a valid TLS
-certificate too — either terminate TLS here directly, or reverse-proxy
-`wss://yourdomain.com/dnd-sync` through Nginx/Apache to this process on
-localhost and update the URL construction in `index.html`/`dm/index.html`
-accordingly. Plain `http://` sites (like the current deployment) don't need
-any of this — plain `ws://` works fine.
+Browsers refuse to open a plain `ws://` connection from a secure (`https://`)
+page — it has to be `wss://`. Rather than managing a separate TLS
+certificate just for this port, reverse-proxy it through the web server
+you're already using for the site, reusing the cert it already has.
+
+**Apache** — inside the existing `<VirtualHost *:443>` block for your
+domain (the one with `SSLCertificateFile` already configured), add:
+```apache
+ProxyPass /dnd-sync ws://127.0.0.1:8181/
+ProxyPassReverse /dnd-sync ws://127.0.0.1:8181/
+```
+then enable the WebSocket proxy module (separate from the regular proxy
+modules you may already have enabled for other sites) and reload:
+```bash
+sudo a2enmod proxy proxy_http proxy_wstunnel
+sudo apache2ctl configtest && sudo systemctl reload apache2
+```
+
+**Nginx** — inside the existing `server { listen 443 ssl; ... }` block:
+```nginx
+location /dnd-sync {
+    proxy_pass http://127.0.0.1:8181;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+}
+```
+then `sudo nginx -t && sudo systemctl reload nginx`.
+
+Either way, no client-side changes are needed — `index.html`/`dm/index.html`
+already request `wss://<host>/dnd-sync` automatically whenever the page
+itself is loaded over https.
 
 ## What it stores
 
